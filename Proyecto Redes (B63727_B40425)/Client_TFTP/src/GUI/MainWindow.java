@@ -66,7 +66,7 @@ public class MainWindow extends JFrame implements ActionListener {
         this.add(this.jLabel_Welcome);
 
         //Atributes
-        this.jtextField_IP.setText("192.168.1.7");
+        this.jtextField_IP.setText("192.168.");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);
         this.jdesktop_pane_principal.setVisible(false);
@@ -84,7 +84,7 @@ public class MainWindow extends JFrame implements ActionListener {
                 Client_TFTP.getClient().getOut().println("Hello");
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al conectar");
+                JOptionPane.showMessageDialog(this, "Error - Dirección IP Inválida");
             }
         }
     }
