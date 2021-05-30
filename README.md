@@ -35,7 +35,7 @@ Luego, buscaremos la ubicacion donde tenemos nuestro proyecto correspondiente
 
 ![Captura de pantalla (80)](https://user-images.githubusercontent.com/38017780/120115831-daee8880-c142-11eb-9b6b-ed1cbcd62c5b.png)
 
-El siguiente paso a seguir es el de seleccionar uno de esos 2 proyectos, en este caso empezaremos con Client_TFTP, donde al abrirlo se desplegará una ventana emergente con una advertencia sobre librerias faltantes
+El siguiente paso a seguir es el de seleccionar uno de esos dos proyectos, en este caso empezaremos con Client_TFTP, donde al abrirlo se desplegará una ventana emergente con una advertencia sobre librerias faltantes
 
 ![Captura de pantalla (82)](https://user-images.githubusercontent.com/38017780/120116001-3fa9e300-c143-11eb-8151-a6895929fcd8.png)
 
