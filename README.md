@@ -43,7 +43,7 @@ En este punto debemos seleccionar la opción de solucionar problemas (Resolve Pr
 
 ![Captura de pantalla (83)](https://user-images.githubusercontent.com/38017780/120116027-5f410b80-c143-11eb-9b27-60e08957f331.png)
 
-Una vez ahí seleccionamos el primer problema y le daremos a la caiila de resolver (Resolve) y se nos desplegará otra venta donde vamos a buscar  la carpeta "MySQL Jar" que esta dentro de la carpeta que descomprimimos al principio
+Una vez ahí seleccionamos el primer problema y le daremos a la casilla de resolver (Resolve) y se nos desplegará otra venta donde vamos a buscar  la carpeta "MySQL Jar" que esta dentro de la carpeta que descomprimimos al principio
 
 ![Captura de pantalla (85)](https://user-images.githubusercontent.com/38017780/120116177-163d8700-c144-11eb-88e0-73a4152a59fa.png)
 
