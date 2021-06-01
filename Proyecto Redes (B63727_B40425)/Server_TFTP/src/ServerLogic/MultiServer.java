@@ -1,6 +1,8 @@
 package ServerLogic;
 
 import Objects.User;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -14,9 +16,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import javax.imageio.ImageIO;
 
 //Class in charge of the server methods
-public class EchoMultiServer {
+public class MultiServer {
 
     //Instances
     private ServerSocket serverSocket;
@@ -72,12 +75,12 @@ public class EchoMultiServer {
                 String inl;
 
                 while (((inl = inputline.readLine()) != null)) {
-                    System.out.println("El cliente dice: " + inl);
+                    System.out.println("Petición del cliente: " + inl);
 
                     if (".".equals(inl)) {
                         inl = "Adios";
                         outline.println("bye");
-                        System.out.println("El cliente dice: " + inl);
+                        System.out.println("Petición del cliente: " + inl);
                         break;
                     }
 
@@ -256,8 +259,7 @@ public class EchoMultiServer {
 
                 // Obtenemos el tamaño del archivo
                 int tam = dis.readInt();
-                System.out.println("Tam server: " + tam);
-                System.out.println("Recibiendo archivo: " + nombreArchivo);
+                System.out.println("Estractos de la imagen : " + nombreArchivo + " entrando por server.");
 
                 // Creamos flujo de salida, este flujo nos sirve para 
                 // indicar donde guardaremos el archivo
@@ -278,10 +280,15 @@ public class EchoMultiServer {
                 out.flush();
                 fos.close();
 
-                System.out.println("Archivo Recibido: " + nombreArchivo);
+                System.out.println("Estractos de imagen recibidos correctamente.");
+                auxx("Carpetas\\" + name + "\\" + nombreArchivo);
+
+                //Finally we put together the image 
+                puttingTogetherImage();
+
                 return true;
             } catch (Exception e) {
-                System.err.println("Error no recibido : " + e.toString());
+                System.err.println("Confirmación - Estractos de imagen recibidos.");
                 return false;
             }
 
@@ -333,6 +340,94 @@ public class EchoMultiServer {
                 return false;
             }
         }//End SendFile
+
+        //Function in charge of putting together the image
+        public void puttingTogetherImage() throws IOException {
+
+            int rowsh = 4;
+            int colsh = 4;
+            int chunksh = rowsh * colsh;
+
+            int chunkWidthh, chunkHeighth;
+            int type = 0;
+
+            //Read the thumbnail
+            File[] imgFiles = new File[chunksh];
+            for (int i = 0; i < chunksh; i++) {
+                imgFiles[i] = new File("Carpetas\\" + name + "\\" + i + ".jpg");
+            }
+
+            //Create a BufferedImage
+            BufferedImage[] buffImages = new BufferedImage[chunksh];
+            for (int i = 0; i < chunksh; i++) {
+                buffImages[i] = ImageIO.read(imgFiles[i]);
+            }
+
+            //Get type type = buffImages[0].getType();
+            chunkWidthh = buffImages[0].getWidth();
+            chunkHeighth = buffImages[0].getHeight();
+
+            // Set the size and type of the stitched map
+            BufferedImage finalImg = new BufferedImage(chunkWidthh * colsh, chunkHeighth * rowsh, type);
+
+            // Write image content
+            int num = 0;
+            for (int i = 0; i < rowsh; i++) {
+                for (int j = 0; j < colsh; j++) {
+                    finalImg.createGraphics().drawImage(buffImages[num], chunkWidthh * j, chunkHeighth * i, null);
+                    num++;
+                }
+            }
+
+            //Output the stitched image 
+            File file1 = new File("Carpetas\\" + name + "\\merge.jpg");
+            ImageIO.write(finalImg, "jpg", file1);
+        }//end puttingTogetherImage
+
+        public void auxx(String fileURL) throws IOException {
+
+            // read in the big picture
+            File file = new File(fileURL);
+            FileInputStream fis = new FileInputStream(file);
+            BufferedImage image = ImageIO.read(fis);
+
+            //Split into 4 * 4 (16) small map
+            int rows = 4;
+            int cols = 4;
+            int chunks = rows * cols;
+
+            // Calculate the width and height of each thumbnail
+            int chunkWidth = image.getWidth() / cols;
+            int chunkHeight = image.getHeight() / rows;
+
+            int count = 0;
+            BufferedImage imgs[] = new BufferedImage[chunks];
+            for (int x = 0; x < rows; x++) {
+                for (int y = 0; y < cols; y++) {
+
+                    //Set the size and type of the thumbnail 
+                    imgs[count] = new BufferedImage(chunkWidth, chunkHeight, image.getType());
+
+                    //Write image content
+                    Graphics2D gr = imgs[count++].createGraphics();
+                    gr.drawImage(image, 0, 0,
+                            chunkWidth, chunkHeight,
+                            chunkWidth * y, chunkHeight * x,
+                            chunkWidth * y + chunkWidth,
+                            chunkHeight * x + chunkHeight, null);
+                    gr.dispose();
+                }
+            }
+
+            String[] split = fileURL.split("\\.");
+
+            // output thumbnail
+            for (int i = 0; i < imgs.length; i++) {
+                File file1 = new File("Carpetas\\" + name + "\\" + i + "." + split[1]);
+                ImageIO.write(imgs[i], "jpg", file1);
+            }
+
+        }//End auxx
 
     }
 

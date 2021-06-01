@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 //Thread Class
-public class EchoClient {
+public class ClassClient {
 
     //Thread Instances
     private DataOutputStream dos;

@@ -3,12 +3,12 @@ package Client_TFTP;
 import GUI.MainWindow;
 import GUI.LoginWindow;
 import GUI.MainClientWindow;
-import ClientLogic.EchoClient;
+import ClientLogic.ClassClient;
 
 public class Client_TFTP {
 
     //Class Instances
-    private static EchoClient client;
+    private static ClassClient client;
     private static MainClientWindow mainClientWindow;
     private static LoginWindow loginWindow;
     private static MainWindow mainWindow;
@@ -16,7 +16,7 @@ public class Client_TFTP {
     //Main
     public static void main(String[] args) throws InterruptedException {
         //Instances are made
-        client = new EchoClient(); 
+        client = new ClassClient(); 
         mainClientWindow = new MainClientWindow();
         loginWindow = new LoginWindow();
         //Init MainWindow
@@ -24,7 +24,7 @@ public class Client_TFTP {
         mainWindow.init();
     }
 
-    public static EchoClient getClient() {
+    public static ClassClient getClient() {
         return client;
     }
 
