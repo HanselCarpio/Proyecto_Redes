@@ -2,6 +2,7 @@ package GUI;
 
 import Client_TFTP.Client_TFTP;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -146,20 +148,23 @@ public class MainClientWindow extends JFrame implements ActionListener {
             label_pic.setVisible(true);
         }
 
+        //First we need to cut the image in pieces
+        cuttingImage(chooser.getSelectedFile().getAbsolutePath());
+
         if (sendFile(chooser.getSelectedFile().getAbsolutePath())) {
             return true;
         } else {
             return false;
         }
-
     }//End sendMessage Method
 
     //SendFile Method
-    public boolean sendFile(String nombreArchivo) {
+    public boolean sendFile(String fileName) throws FileNotFoundException, IOException {
 
         try {
-            System.out.println("Nombre del Archivo: " + nombreArchivo);
-            File file = new File(nombreArchivo);
+
+            System.out.println("Nombre del Archivo: " + fileName);
+            File file = new File(fileName);
 
             // Capturing the file length
             int fileLength = (int) file.length();
@@ -173,7 +178,7 @@ public class MainClientWindow extends JFrame implements ActionListener {
             // Sending file length
             Client_TFTP.getClient().getDos().writeInt(fileLength);
 
-            FileInputStream fis = new FileInputStream(nombreArchivo);
+            FileInputStream fis = new FileInputStream(fileName);
             BufferedInputStream bis = new BufferedInputStream(fis);
 
             // Array Byte for file length
@@ -195,6 +200,7 @@ public class MainClientWindow extends JFrame implements ActionListener {
             System.err.println("Error - Archivo no enviado." + e);
             return false;
         }
+
         return true;
 
     }//endSendFile
@@ -208,6 +214,54 @@ public class MainClientWindow extends JFrame implements ActionListener {
         this.directories = directories;
 
     }
+
+    //Function in charge of cutting images in small pieces
+    public void cuttingImage(String fileURL) throws IOException {
+
+        // read in the big picture
+        File file = new File(fileURL);
+        FileInputStream fis = new FileInputStream(file);
+        BufferedImage image = ImageIO.read(fis);
+
+        //Split into 4 * 4 (16) small map
+        int rows = 4;
+        int cols = 4;
+        int chunks = rows * cols;
+
+        // Calculate the width and height of each thumbnail
+        int chunkWidth = image.getWidth() / cols;
+        int chunkHeight = image.getHeight() / rows;
+
+        int count = 0;
+        BufferedImage imgs[] = new BufferedImage[chunks];
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+
+                //Set the size and type of the thumbnail 
+                imgs[count] = new BufferedImage(chunkWidth, chunkHeight, image.getType());
+
+                //Write image content
+                Graphics2D gr = imgs[count++].createGraphics();
+                gr.drawImage(image, 0, 0,
+                        chunkWidth, chunkHeight,
+                        chunkWidth * y, chunkHeight * x,
+                        chunkWidth * y + chunkWidth,
+                        chunkHeight * x + chunkHeight, null);
+                gr.dispose();
+            }
+        }
+
+        String[] split = fileURL.split("\\.");
+
+        // output thumbnail
+        for (int i = 0; i < imgs.length; i++) {
+            File file1 = new File("src/img/" + i + "." + split[1]);
+            ImageIO.write(imgs[i], "jpg", file1);
+        }
+
+        //Cutting image Confirmation Message
+        System.out.print("La imagen encontrada en la ruta: " + fileURL + " ha sido cortada con éxito.");
+    }//End cuttingImage
 
     //downloadFile
     public boolean downloadFile() {
@@ -257,6 +311,7 @@ public class MainClientWindow extends JFrame implements ActionListener {
             } catch (Exception e) {
                 System.err.println("Error - " + e.toString());
                 return false;
+
             }
         }
     }//End downloadFile
